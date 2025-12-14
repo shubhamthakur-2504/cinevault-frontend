@@ -1,7 +1,7 @@
 import React from 'react';
 import { Paper, Grid, TextField, Button, FormControl, InputLabel, Select, MenuItem, IconButton, Divider } from '@mui/material';
 import { Search as SearchIcon, Sort as SortIcon } from '@mui/icons-material';
-import { SORT_OPTIONS, SORT_ORDERS } from '../../utils/constants';
+import { SORT_OPTIONS, SORT_ORDERS } from '../../utils/constant';
 
 const SortFilterPanel = ({ searchQuery, onSearchChange, onSearchSubmit, sortBy, onSortByChange, sortOrder, onSortOrderChange, onSortSubmit }) => {
     return (
