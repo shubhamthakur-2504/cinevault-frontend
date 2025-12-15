@@ -129,18 +129,29 @@ const HomePage = () => {
                 </Box>
             ) : (
                 <>
-                    <Grid container spacing={3}>
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: {
+                                xs: 'repeat(1, 1fr)',
+                                sm: 'repeat(2, 1fr)',
+                                md: 'repeat(3, 1fr)',
+                                lg: 'repeat(4, 1fr)',
+                            },
+                            gap: 3,
+                        }}
+                    >
                         {movies.map((movie) => (
-                            <Grid item xs={12} sm={6} md={4} lg={3} key={movie._id}>
+                            <Box key={movie._id}>
                                 <MovieCard
                                     movie={movie}
                                     onEdit={handleEdit}
                                     onDelete={handleDelete}
                                     isAdmin={user?.role === 'ADMIN'}
                                 />
-                            </Grid>
+                            </Box>
                         ))}
-                    </Grid>
+                    </Box>
 
                     {hasNextPage && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>

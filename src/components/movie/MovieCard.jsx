@@ -29,7 +29,7 @@ const MovieCard = ({ movie, onEdit, onDelete, isAdmin }) => {
             >
                 <CardMedia
                     component="img"
-                    height="400"
+                    height="350"
                     image={movie.posterUrl}
                     alt={movie.title}
                     sx={{
@@ -44,8 +44,15 @@ const MovieCard = ({ movie, onEdit, onDelete, isAdmin }) => {
                     <Typography
                         variant="h6"
                         gutterBottom
-                        noWrap
-                        sx={{ fontWeight: 600 }}
+                        sx={{
+                            fontWeight: 600,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            minHeight: '3.2em', 
+                        }}
                     >
                         {movie.title}
                     </Typography>
@@ -57,7 +64,7 @@ const MovieCard = ({ movie, onEdit, onDelete, isAdmin }) => {
                         </Typography>
                     </Box>
 
-                    <Stack direction="row" spacing={1} sx={{ mb: 1.5 }}>
+                    <Stack direction="row" spacing={1} sx={{ mb: 1.5, flexWrap: 'wrap', gap: 0.5 }}>
                         <Chip
                             icon={<CalendarToday />}
                             label={formatYear(movie.releaseDate)}
