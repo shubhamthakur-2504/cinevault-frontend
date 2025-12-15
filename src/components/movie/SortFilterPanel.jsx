@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, Grid, TextField, Button, FormControl, InputLabel, Select, MenuItem, IconButton, Divider } from '@mui/material';
+import { Paper, TextField, Button, FormControl, InputLabel, Select, MenuItem, InputAdornment, IconButton, Divider, Box } from '@mui/material';
 import { Search as SearchIcon, Sort as SortIcon } from '@mui/icons-material';
 import { SORT_OPTIONS, SORT_ORDERS } from '../../utils/constant';
 
@@ -7,8 +7,15 @@ const SortFilterPanel = ({ searchQuery, onSearchChange, onSearchSubmit, sortBy, 
     return (
         <Paper sx={{ p: 3, mb: 4 }}>
             {/* Search Section */}
-            <Grid container spacing={2}>
-                <Grid item xs={12} md={8}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', md: 'row' },
+                    gap: 2,
+                    mb: 3,
+                }}
+            >
+                <Box sx={{ flex: 1 }}>
                     <TextField
                         fullWidth
                         placeholder="Search movies by name or description..."
@@ -26,25 +33,32 @@ const SortFilterPanel = ({ searchQuery, onSearchChange, onSearchSubmit, sortBy, 
                             },
                         }}
                     />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                    <Button
-                        fullWidth
-                        variant="contained"
-                        startIcon={<SearchIcon />}
-                        onClick={onSearchSubmit}
-                        sx={{ height: '56px' }}
-                    >
-                        Search
-                    </Button>
-                </Grid>
-            </Grid>
+                </Box>
+                <Button
+                    variant="contained"
+                    startIcon={<SearchIcon />}
+                    onClick={onSearchSubmit}
+                    sx={{
+                        height: '56px',
+                        minWidth: { xs: '100%', md: '150px' }
+                    }}
+                >
+                    Search
+                </Button>
+            </Box>
 
             <Divider sx={{ my: 3 }} />
 
             {/* Sort Section */}
-            <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12} sm={5}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: 2,
+                    alignItems: 'stretch',
+                }}
+            >
+                <Box sx={{ flex: '1 1 40%', minWidth: { xs: '100%', sm: '200px' } }}>
                     <FormControl fullWidth>
                         <InputLabel>Sort By</InputLabel>
                         <Select
@@ -59,9 +73,9 @@ const SortFilterPanel = ({ searchQuery, onSearchChange, onSearchSubmit, sortBy, 
                             ))}
                         </Select>
                     </FormControl>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={4}>
+                <Box sx={{ flex: '1 1 30%', minWidth: { xs: '100%', sm: '150px' } }}>
                     <FormControl fullWidth>
                         <InputLabel>Order</InputLabel>
                         <Select
@@ -76,20 +90,21 @@ const SortFilterPanel = ({ searchQuery, onSearchChange, onSearchSubmit, sortBy, 
                             ))}
                         </Select>
                     </FormControl>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={3}>
-                    <Button
-                        fullWidth
-                        variant="outlined"
-                        startIcon={<SortIcon />}
-                        onClick={onSortSubmit}
-                        sx={{ height: '56px' }}
-                    >
-                        Apply Sort
-                    </Button>
-                </Grid>
-            </Grid>
+                <Button
+                    variant="outlined"
+                    startIcon={<SortIcon />}
+                    onClick={onSortSubmit}
+                    sx={{
+                        height: '56px',
+                        flex: '0 0 auto',
+                        minWidth: { xs: '100%', sm: '140px' }
+                    }}
+                >
+                    Apply Sort
+                </Button>
+            </Box>
         </Paper>
     );
 };

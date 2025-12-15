@@ -52,7 +52,7 @@ const RegisterPage = () => {
                 message: MESSAGES.REGISTER_SUCCESS,
                 severity: 'success',
             });
-            setTimeout(() => navigate('/login'), 2000);
+            setTimeout(() => navigate('/'), 2000);
         } catch (error) {
             setSnackbar({
                 open: true,
@@ -68,7 +68,7 @@ const RegisterPage = () => {
         <Container maxWidth="sm">
             <Box
                 sx={{
-                    mt: 8,
+                    mt: 1,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',

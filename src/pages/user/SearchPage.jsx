@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Grid, Box, CircularProgress } from '@mui/material';
+import { Container, Typography, Box, CircularProgress } from '@mui/material';
 import api from '../../api/axios';
 import { useAuth } from '../../contexts/AuthContext';
 import MovieCard from '../../components/movie/MovieCard';
@@ -15,6 +15,7 @@ const SearchPage = () => {
     const [sortBy, setSortBy] = useState('');
     const [sortOrder, setSortOrder] = useState('desc');
     const [loading, setLoading] = useState(false);
+    const [currentView, setCurrentView] = useState('none'); 
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
@@ -39,7 +40,14 @@ const SearchPage = () => {
             const { data } = await api.get('/movies/search', {
                 params: { q: searchQuery },
             });
-            setMovies(data.data.movies);
+
+            let resultMovies = data.data.movies;
+            if (sortBy && resultMovies.length > 0) {
+                resultMovies = sortMoviesLocally(resultMovies, sortBy, sortOrder);
+            }
+
+            setMovies(resultMovies);
+            setCurrentView('search');
         } catch (error) {
             setSnackbar({
                 open: true,
@@ -63,9 +71,20 @@ const SearchPage = () => {
 
         setLoading(true);
         try {
-            const params = { [sortBy]: sortOrder };
-            const { data } = await api.get('/movies/sorted', { params });
-            setMovies(data.data.movies);
+            if (currentView === 'search' && searchQuery.trim()) {
+                // Re-search and then sort
+                const { data } = await api.get('/movies/search', {
+                    params: { q: searchQuery },
+                });
+                const sortedMovies = sortMoviesLocally(data.data.movies, sortBy, sortOrder);
+                setMovies(sortedMovies);
+            } else {
+                // No search active, get all sorted movies from API
+                const params = { [sortBy]: sortOrder };
+                const { data } = await api.get('/movies/sorted', { params });
+                setMovies(data.data.movies);
+                setCurrentView('sort');
+            }
         } catch (error) {
             setSnackbar({
                 open: true,
@@ -75,6 +94,42 @@ const SearchPage = () => {
         } finally {
             setLoading(false);
         }
+    };
+    const sortMoviesLocally = (moviesToSort, field, order) => {
+        const sorted = [...moviesToSort].sort((a, b) => {
+            let aVal, bVal;
+
+            switch (field) {
+                case 'name':
+                    aVal = a.title?.toLowerCase() || '';
+                    bVal = b.title?.toLowerCase() || '';
+                    break;
+                case 'rating':
+                    aVal = a.rating || 0;
+                    bVal = b.rating || 0;
+                    break;
+                case 'releaseDate':
+                    aVal = new Date(a.releaseDate).getTime();
+                    bVal = new Date(b.releaseDate).getTime();
+                    break;
+                case 'duration':
+                    aVal = a.duration || 0;
+                    bVal = b.duration || 0;
+                    break;
+                default:
+                    return 0;
+            }
+
+            if (typeof aVal === 'string') {
+                return order === 'asc'
+                    ? aVal.localeCompare(bVal)
+                    : bVal.localeCompare(aVal);
+            } else {
+                return order === 'asc' ? aVal - bVal : bVal - aVal;
+            }
+        });
+
+        return sorted;
     };
 
     const handleEdit = (movie) => {
@@ -138,18 +193,29 @@ const SearchPage = () => {
                     </Typography>
                 </Box>
             ) : (
-                <Grid container spacing={3}>
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: {
+                            xs: 'repeat(1, 1fr)',
+                            sm: 'repeat(2, 1fr)',
+                            md: 'repeat(3, 1fr)',
+                            lg: 'repeat(4, 1fr)',
+                        },
+                        gap: 3,
+                    }}
+                >
                     {movies.map((movie) => (
-                        <Grid item xs={12} sm={6} md={4} lg={3} key={movie._id}>
+                        <Box key={movie._id}>
                             <MovieCard
                                 movie={movie}
                                 onEdit={handleEdit}
                                 onDelete={handleDelete}
                                 isAdmin={user?.role === 'ADMIN'}
                             />
-                        </Grid>
+                        </Box>
                     ))}
-                </Grid>
+                </Box>
             )}
 
             <SnackbarAlert
